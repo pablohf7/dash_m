@@ -422,4 +422,4 @@ def update_dashboard(start_date, end_date, scope_value, contents, filename):
     return availability_pct, mtbf_val, mttr_val, total_interventions, availability_fig, pie, mtbf_fig, mttr_fig
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
