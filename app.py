@@ -28,7 +28,7 @@ app.layout = dbc.Container([
                        style={"fontSize": "0.9rem"}))
     ]),
 
-    # Panel de carga de archivos y filtros
+    # Panel de carga de archivos y filtros - MEJORADO
     dbc.Row([
         dbc.Col([
             dbc.Card([
@@ -37,55 +37,67 @@ app.layout = dbc.Container([
                               style={"fontSize": "1rem"}),
                 dbc.CardBody([
                     dbc.Row([
-                        # Upload component
+                        # Upload component - MEJORADO
                         dbc.Col([
-                            html.Label("Cargar archivo Excel", className="text-light mb-1", style={"fontSize": "0.9rem"}),
-                            dcc.Upload(
-                                id='upload-data',
-                                children=html.Div([
-                                    'Arrastra o ',
-                                    html.A('selecciona un archivo', style={"color": "#1E90FF"})
-                                ], style={"fontSize": "0.9rem"}),
-                                style={
-                                    'width': '100%',
-                                    'height': '50px',
-                                    'lineHeight': '50px',
-                                    'borderWidth': '1px',
-                                    'borderStyle': 'dashed',
-                                    'borderRadius': '5px',
-                                    'textAlign': 'center',
-                                    'margin': '5px 0'
-                                },
-                                multiple=False
-                            ),
-                            html.Div(id='output-data-upload', className="text-light mt-1", style={"fontSize": "0.8rem"}),
+                            html.Div([
+                                html.Label("Cargar archivo Excel", className="text-light mb-1", style={"fontSize": "0.9rem"}),
+                                dcc.Upload(
+                                    id='upload-data',
+                                    children=html.Div([
+                                        'Arrastra o ',
+                                        html.A('selecciona un archivo', style={"color": "#1E90FF"})
+                                    ], style={"fontSize": "0.9rem"}),
+                                    style={
+                                        'width': '100%',
+                                        'height': '50px',
+                                        'lineHeight': '50px',
+                                        'borderWidth': '1px',
+                                        'borderStyle': 'dashed',
+                                        'borderRadius': '5px',
+                                        'textAlign': 'center',
+                                        'margin': '5px 0',
+                                        'backgroundColor': 'rgba(255, 255, 255, 0.1)'
+                                    },
+                                    multiple=False
+                                ),
+                            ], style={"height": "80px", "display": "flex", "flexDirection": "column", "justifyContent": "flex-end"})
                         ], width=4),
                         
-                        # Filtro de fechas
+                        # Filtro de fechas - MEJORADO
                         dbc.Col([
-                            html.Label("Rango de Fechas", className="text-light mb-1", style={"fontSize": "0.9rem"}),
-                            dcc.DatePickerRange(
-                                id="date-range",
-                                start_date_placeholder_text="Fecha inicio",
-                                end_date_placeholder_text="Fecha fin",
-                                display_format="YYYY-MM-DD",
-                                className="mb-1 w-100",
-                                style={"color": "#000000", "fontSize": "0.9rem"}
-                            )
+                            html.Div([
+                                html.Label("Rango de Fechas", className="text-light mb-1", style={"fontSize": "0.9rem"}),
+                                dcc.DatePickerRange(
+                                    id="date-range",
+                                    start_date_placeholder_text="Fecha inicio",
+                                    end_date_placeholder_text="Fecha fin",
+                                    display_format="YYYY-MM-DD",
+                                    className="mb-1 w-100",
+                                    style={"color": "#000000", "fontSize": "0.9rem", "height": "50px"}
+                                )
+                            ], style={"height": "80px", "display": "flex", "flexDirection": "column", "justifyContent": "flex-end"})
                         ], width=4),
                         
-                        # Filtro de ámbito (con texto negro)
+                        # Filtro de ámbito (con texto negro) - MEJORADO
                         dbc.Col([
-                            html.Label("Ámbito de Análisis", className="text-light mb-1", style={"fontSize": "0.9rem"}),
-                            dcc.Dropdown(
-                                id="scope-dropdown",
-                                options=[],
-                                placeholder="Selecciona un ámbito...",
-                                className="mb-1",
-                                style={'color': 'black', 'fontSize': '0.9rem'}  # Texto negro en el dropdown
-                            )
+                            html.Div([
+                                html.Label("Ámbito de Análisis", className="text-light mb-1", style={"fontSize": "0.9rem"}),
+                                dcc.Dropdown(
+                                    id="scope-dropdown",
+                                    options=[],
+                                    placeholder="Selecciona un ámbito...",
+                                    className="mb-1",
+                                    style={'color': 'black', 'fontSize': '0.9rem', 'height': '50px'}  # Texto negro en el dropdown
+                                )
+                            ], style={"height": "80px", "display": "flex", "flexDirection": "column", "justifyContent": "flex-end"})
                         ], width=4),
-                    ], align="center")
+                    ], align="end"),  # Alinear elementos al final para igualar altura
+                    # Mensaje de carga - fuera del contenedor de controles para no afectar la alineación
+                    dbc.Row([
+                        dbc.Col([
+                            html.Div(id='output-data-upload', className="text-light mt-1", style={"fontSize": "0.8rem"})
+                        ], width=12)
+                    ])
                 ], className="py-2")
             ], className="mb-3")
         ])
@@ -335,7 +347,7 @@ def update_dashboard(start_date, end_date, scope_value, contents, filename):
     mtbf = (total_period_hours * equip_count) / failures if failures > 0 else np.nan
     mtbf_val = f"{mtbf:.2f}" if not pd.isna(mtbf) else "N/A"
 
-    # ---- 📊 Gráfico de Disponibilidad Mensual ----
+    # ---- 📊 Gráfico de Disponibilidad Mensual - MEJORADO ----
     dff["month"] = dff["start_datetime"].dt.to_period("M").dt.to_timestamp()
     monthly = dff.groupby("month").agg({"duration_hours": "sum"}).reset_index()
     monthly["hours_in_month"] = monthly["month"].dt.days_in_month * 24
@@ -354,8 +366,9 @@ def update_dashboard(start_date, end_date, scope_value, contents, filename):
         title_font_size=16,
         margin=dict(l=20, r=20, t=40, b=20)
     )
-    availability_fig.update_traces(textposition="outside")
-    availability_fig.update_yaxes(tickformat=".0%", range=[0, 1])
+    # MEJORA: Asegurar que los valores se vean en las barras
+    availability_fig.update_traces(textposition="outside", textfont_size=12)
+    availability_fig.update_yaxes(tickformat=".0%", range=[0, 1.1])  # Espacio extra para los valores
     availability_fig.update_xaxes(tickangle=45)
 
     # ---- 📊 Gráfico circular (colores fijos) ----
